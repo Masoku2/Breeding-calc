@@ -219,6 +219,10 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
 }
 .iv-chip.on { background: rgba(53,208,127,.15); border-color: var(--good); color: var(--good); }
 
+.egg-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+.egg-label { font-size: 11px; color: var(--text-dim); white-space: nowrap; }
+.egg-input { flex: 1; min-width: 0; }
+
 .node-actions { display: flex; gap: 8px; margin-top: 12px; }
 
 .buy-toggle {
@@ -299,6 +303,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
 }
 .cnode-iv-none { font-size: 10px; color: var(--text-dim); font-style: italic; }
 .cnode-meta { font-size: 11px; color: var(--text-dim); }
+.cnode-moves { font-size: 11px; color: var(--accent); line-height: 1.3; }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {

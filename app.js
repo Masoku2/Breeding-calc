@@ -51,6 +51,7 @@ function newNode(overrides = {}) {
     gender: "male",
     nature: "",
     ability: "",
+    eggMoves: "",
     ivs: IV_STATS.reduce((acc, s) => ((acc[s] = false), acc), {}),
     heldItem: "none",
     cost: 0,
@@ -283,6 +284,14 @@ function chartCard(node, isRoot) {
     card.appendChild(meta);
   }
 
+  // Egg moves on their own line so they stay readable.
+  if (node.eggMoves) {
+    const moves = document.createElement("div");
+    moves.className = "cnode-moves";
+    moves.textContent = "🥚 " + node.eggMoves;
+    card.appendChild(moves);
+  }
+
   // Clicking a chart node jumps to the editable view.
   card.addEventListener("click", () => {
     state.viewMode = "edit";
@@ -427,6 +436,9 @@ function renderNode(node, isRoot) {
   // IV chips
   wrap.appendChild(renderIvs(node));
 
+  // Egg moves (comma-separated free text — a Pokémon can carry several).
+  wrap.appendChild(renderEggMoves(node));
+
   // Actions
   const actions = document.createElement("div");
   actions.className = "node-actions";
@@ -482,6 +494,22 @@ function renderIvs(node) {
     });
     row.appendChild(chip);
   });
+  return row;
+}
+
+function renderEggMoves(node) {
+  const row = document.createElement("div");
+  row.className = "egg-row";
+  const label = document.createElement("span");
+  label.className = "egg-label";
+  label.textContent = "🥚 Egg moves";
+  row.appendChild(label);
+  row.appendChild(
+    inputEl("text", node.eggMoves, (v) => set(node, "eggMoves", v), {
+      cls: "egg-input",
+      placeholder: "e.g. Dragon Dance, Outrage (comma-separated)",
+    })
+  );
   return row;
 }
 

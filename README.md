@@ -18,6 +18,7 @@ whether the path makes money.
   - **Nature** — all 25 natures, labelled with their stat boost/drop (passed down by
     a parent holding an Everstone)
   - **Ability** — free-text with autocomplete for common abilities
+  - **Egg moves** — a comma-separated list of the moves to breed onto that Pokémon
   - **31 IVs** — click the HP / Atk / Def / SpA / SpD / Spe chips to mark perfect IVs
   - **Held item** — Everstone (nature) or the six Power items (PokeMMO uses
     Power items for IV inheritance; there is no Destiny Knot)
