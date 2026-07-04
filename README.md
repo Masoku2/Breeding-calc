@@ -21,8 +21,12 @@ whether the path makes money.
   - **31 IVs** — click the HP / Atk / Def / SpA / SpD / Spe chips to mark perfect IVs
   - **Held item** — Everstone (nature) or the six Power items (PokeMMO uses
     Power items for IV inheritance; there is no Destiny Knot)
+- **Buy vs. breed** — every Pokémon you buy has a **Buy cost**. Beyond the bottom
+  "Buy" Pokémon, any intermediate breeder can be flagged **"Buy this breeder instead
+  of breeding it"** — that reveals its own buy cost and removes its sub-tree from the
+  calculation, so you can price out buying a pre-made breeder off the market.
 - **Profit calculation** — enter a sell price for the final Pokémon and buy costs for
-  each leaf Pokémon, plus shared item prices in the sidebar. The summary shows profit,
+  each Pokémon you purchase, plus shared item prices in the sidebar. The summary shows profit,
   margin, total cost, number of base Pokémon, number of breeds, and items consumed.
   Held items are counted as consumed on every breed (each non-final parent's item).
 - **Two views** — toggle between:
