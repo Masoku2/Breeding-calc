@@ -73,3 +73,28 @@ const COMMON_SPECIES = [
   "Togepi", "Togetic", "Togekiss", "Elekid", "Electabuzz", "Electivire",
   "Magby", "Magmar", "Magmortar", "Rhyhorn", "Rhydon", "Rhyperior",
 ];
+
+// A non-exhaustive list of abilities for the autocomplete. The ability field is
+// free text, so any ability (including ones not listed) can be typed in.
+const COMMON_ABILITIES = [
+  "Adaptability", "Aerilate", "Aftermath", "Air Lock", "Analytic", "Anger Point",
+  "Anticipation", "Arena Trap", "Bad Dreams", "Battle Armor", "Blaze", "Chlorophyll",
+  "Clear Body", "Cloud Nine", "Competitive", "Compound Eyes", "Contrary", "Cursed Body",
+  "Cute Charm", "Damp", "Defiant", "Download", "Drizzle", "Drought", "Dry Skin",
+  "Early Bird", "Effect Spore", "Filter", "Flame Body", "Flash Fire", "Flower Gift",
+  "Forewarn", "Frisk", "Gluttony", "Guts", "Harvest", "Heatproof", "Huge Power",
+  "Hustle", "Hydration", "Hyper Cutter", "Ice Body", "Immunity", "Inner Focus",
+  "Insomnia", "Intimidate", "Iron Barbs", "Iron Fist", "Keen Eye", "Levitate",
+  "Lightning Rod", "Limber", "Liquid Ooze", "Magic Bounce", "Magic Guard", "Magnet Pull",
+  "Marvel Scale", "Moody", "Mold Breaker", "Moxie", "Multiscale", "Natural Cure",
+  "No Guard", "Overgrow", "Own Tempo", "Poison Heal", "Poison Point", "Prankster",
+  "Pressure", "Pure Power", "Quick Feet", "Rain Dish", "Reckless", "Regenerator",
+  "Rock Head", "Rough Skin", "Sand Force", "Sand Rush", "Sand Stream", "Sand Veil",
+  "Sap Sipper", "Scrappy", "Serene Grace", "Shadow Tag", "Sheer Force", "Shell Armor",
+  "Shield Dust", "Simple", "Skill Link", "Snow Warning", "Solar Power", "Solid Rock",
+  "Soundproof", "Speed Boost", "Stall", "Static", "Steadfast", "Stench", "Sticky Hold",
+  "Storm Drain", "Sturdy", "Suction Cups", "Super Luck", "Swarm", "Swift Swim",
+  "Synchronize", "Technician", "Thick Fat", "Tinted Lens", "Torrent", "Tough Claws",
+  "Trace", "Truant", "Unaware", "Unburden", "Unnerve", "Volt Absorb", "Water Absorb",
+  "Water Veil", "White Smoke", "Wonder Guard", "Wonder Skin",
+];
