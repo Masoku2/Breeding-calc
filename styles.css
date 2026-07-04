@@ -202,6 +202,7 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
 .node-gender { width: 120px; }
 .node-nature { width: 165px; }
 .node-ability { width: 150px; }
+.node-roll { width: 140px; }
 .node-item { width: 200px; }
 .node-cost { width: 120px; }
 

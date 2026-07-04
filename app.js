@@ -11,7 +11,7 @@ const STORAGE_KEY = "breeding-calc.v1";
 
 const defaultState = () => ({
   paths: [],
-  prices: { everstone: 0, powerItem: 0 },
+  prices: { everstone: 0, powerItem: 0, incense: 9600, abilityChange: 35000 },
   activePathId: null,
   viewMode: "edit", // "edit" | "chart"
 });
@@ -23,7 +23,9 @@ function load() {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultState();
     const parsed = JSON.parse(raw);
-    return { ...defaultState(), ...parsed };
+    const base = defaultState();
+    // Deep-merge prices so newly added price keys keep their defaults.
+    return { ...base, ...parsed, prices: { ...base.prices, ...(parsed.prices || {}) } };
   } catch (e) {
     console.warn("Failed to load saved state:", e);
     return defaultState();
@@ -51,6 +53,7 @@ function newNode(overrides = {}) {
     gender: "male",
     nature: "",
     ability: "",
+    abilityRoll: "guaranteed",
     eggMoves: "",
     ivs: IV_STATS.reduce((acc, s) => ((acc[s] = false), acc), {}),
     heldItem: "none",
@@ -82,6 +85,7 @@ function isBought(node, isRoot) {
 }
 
 const itemById = (id) => HELD_ITEMS.find((i) => i.id === id) || HELD_ITEMS[0];
+const rollById = (id) => ABILITY_ROLLS.find((r) => r.id === id) || ABILITY_ROLLS[0];
 
 function itemPrice(heldItemId) {
   const item = itemById(heldItemId);
@@ -116,6 +120,14 @@ function analyze(node, isRoot, acc) {
 
   // Bred here (root or an intermediate you breed yourself).
   if (node.parents.length) acc.breeds += 1;
+
+  // Random ability roll → expected cost of fixing a wrong roll.
+  const wrong = rollById(node.abilityRoll).wrong;
+  if (wrong > 0) {
+    acc.abilityRolls += 1;
+    acc.abilityExpected += wrong * (Number(state.prices.abilityChange) || 0);
+  }
+
   node.parents.forEach((child) => analyze(child, false, acc));
   return acc;
 }
@@ -127,8 +139,10 @@ function computeSummary(path) {
     breeds: 0,
     itemCount: 0,
     itemCost: 0,
+    abilityRolls: 0,
+    abilityExpected: 0,
   });
-  const totalCost = acc.baseCost + acc.itemCost;
+  const totalCost = acc.baseCost + acc.itemCost + acc.abilityExpected;
   const sell = Number(path.sellPrice) || 0;
   return { ...acc, totalCost, sell, profit: sell - totalCost };
 }
@@ -157,7 +171,7 @@ function render() {
 }
 
 function renderPrices() {
-  ["everstone", "powerItem"].forEach((key) => {
+  ["everstone", "powerItem", "incense", "abilityChange"].forEach((key) => {
     const input = document.querySelector(`[data-price="${key}"]`);
     if (input) input.value = state.prices[key] ?? 0;
   });
@@ -272,7 +286,10 @@ function chartCard(node, isRoot) {
   // Meta: nature + ability + held item.
   const metaBits = [];
   if (node.nature) metaBits.push(node.nature);
-  if (node.ability) metaBits.push(node.ability);
+  if (node.ability) {
+    const roll = !bought ? rollById(node.abilityRoll) : ABILITY_ROLLS[0];
+    metaBits.push(node.ability + (roll.short ? ` 🎲${roll.short}` : ""));
+  }
   if (!isRoot && node.heldItem && node.heldItem !== "none") {
     metaBits.push(itemById(node.heldItem).label.replace(/\s*\(.*\)/, ""));
   }
@@ -331,7 +348,13 @@ function renderSummary(path) {
       <div class="label">Items used</div>
       <div class="value">${s.itemCount}</div>
       <div class="sub">${money(s.itemCost)} consumed</div>
-    </div>`;
+    </div>
+    ${s.abilityRolls > 0 ? `
+    <div class="stat">
+      <div class="label">Ability rolls</div>
+      <div class="value">${s.abilityRolls}</div>
+      <div class="sub">~${money(s.abilityExpected)} expected fix</div>
+    </div>` : ""}`;
 }
 
 function renderNode(node, isRoot) {
@@ -385,6 +408,22 @@ function renderNode(node, isRoot) {
       })
     )
   );
+
+  // Ability roll — guaranteed vs a random 50/50 or 33/33/33 roll. Only relevant
+  // for a Pokémon you breed (a bought one already has its ability).
+  if (!bought) {
+    top.appendChild(
+      field(
+        "Ability roll",
+        selectEl(
+          ABILITY_ROLLS.map((r) => ({ id: r.id, label: r.label })),
+          node.abilityRoll,
+          (v) => set(node, "abilityRoll", v),
+          "node-roll"
+        )
+      )
+    );
+  }
 
   // Held item — only meaningful when the node is used as a parent (not root).
   if (!isRoot) {

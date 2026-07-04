@@ -10,6 +10,7 @@ const IV_STATS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
 const HELD_ITEMS = [
   { id: "none",         label: "None",              priceKey: null,         passes: null },
   { id: "everstone",    label: "Everstone (nature)", priceKey: "everstone",  passes: null },
+  { id: "incense",      label: "Incense",           priceKey: "incense",    passes: null },
   { id: "powerWeight",  label: "Power Weight (HP)",  priceKey: "powerItem",  passes: "HP" },
   { id: "powerBracer",  label: "Power Bracer (Atk)", priceKey: "powerItem",  passes: "Atk" },
   { id: "powerBelt",    label: "Power Belt (Def)",   priceKey: "powerItem",  passes: "Def" },
@@ -23,6 +24,15 @@ const GENDERS = [
   { id: "female",     label: "♀ Female" },
   { id: "ditto",      label: "Ditto" },
   { id: "genderless", label: "Genderless" },
+];
+
+// How the ability is determined on this breed. When it's a random roll, there's
+// a chance of the wrong ability, which costs an Ability Capsule (~35k) to fix.
+// `wrong` is the probability of not getting the desired ability.
+const ABILITY_ROLLS = [
+  { id: "guaranteed", label: "Guaranteed",             short: "",         wrong: 0 },
+  { id: "50",         label: "50 / 50 roll",           short: "50/50",    wrong: 1 / 2 },
+  { id: "33",         label: "33 / 33 / 33 roll",      short: "33/33/33", wrong: 2 / 3 },
 ];
 
 // The 25 natures. Nature is passed down by a parent holding an Everstone.
