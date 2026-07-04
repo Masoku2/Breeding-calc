@@ -25,6 +25,37 @@ const GENDERS = [
   { id: "genderless", label: "Genderless" },
 ];
 
+// The 25 natures. Nature is passed down by a parent holding an Everstone.
+// Labels note the boosted/lowered stat (neutral natures change nothing).
+const NATURES = [
+  { id: "",         label: "Any / unset" },
+  { id: "Adamant",  label: "Adamant (+Atk −SpA)" },
+  { id: "Bashful",  label: "Bashful (neutral)" },
+  { id: "Bold",     label: "Bold (+Def −Atk)" },
+  { id: "Brave",    label: "Brave (+Atk −Spe)" },
+  { id: "Calm",     label: "Calm (+SpD −Atk)" },
+  { id: "Careful",  label: "Careful (+SpD −SpA)" },
+  { id: "Docile",   label: "Docile (neutral)" },
+  { id: "Gentle",   label: "Gentle (+SpD −Def)" },
+  { id: "Hardy",    label: "Hardy (neutral)" },
+  { id: "Hasty",    label: "Hasty (+Spe −Def)" },
+  { id: "Impish",   label: "Impish (+Def −SpA)" },
+  { id: "Jolly",    label: "Jolly (+Spe −SpA)" },
+  { id: "Lax",      label: "Lax (+Def −SpD)" },
+  { id: "Lonely",   label: "Lonely (+Atk −Def)" },
+  { id: "Mild",     label: "Mild (+SpA −Def)" },
+  { id: "Modest",   label: "Modest (+SpA −Atk)" },
+  { id: "Naive",    label: "Naive (+Spe −SpD)" },
+  { id: "Naughty",  label: "Naughty (+Atk −SpD)" },
+  { id: "Quiet",    label: "Quiet (+SpA −Spe)" },
+  { id: "Quirky",   label: "Quirky (neutral)" },
+  { id: "Rash",     label: "Rash (+SpA −SpD)" },
+  { id: "Relaxed",  label: "Relaxed (+Def −Spe)" },
+  { id: "Sassy",    label: "Sassy (+SpD −Spe)" },
+  { id: "Serious",  label: "Serious (neutral)" },
+  { id: "Timid",    label: "Timid (+Spe −Atk)" },
+];
+
 // A non-exhaustive list of frequently bred species for the autocomplete.
 // The species field is free text, so anything can be typed in.
 const COMMON_SPECIES = [
