@@ -16,7 +16,8 @@ whether the path makes money.
   - **Species** (with autocomplete for common breeders)
   - **Gender** (♂ / ♀ / Ditto / Genderless)
   - **31 IVs** — click the HP / Atk / Def / SpA / SpD / Spe chips to mark perfect IVs
-  - **Held item** — Destiny Knot, Everstone, or the six Power items
+  - **Held item** — Everstone (nature) or the six Power items (PokeMMO uses
+    Power items for IV inheritance; there is no Destiny Knot)
 - **Profit calculation** — enter a sell price for the final Pokémon and buy costs for
   each leaf Pokémon, plus shared item prices in the sidebar. The summary shows profit,
   margin, total cost, number of base Pokémon, number of breeds, and items consumed.
@@ -36,5 +37,5 @@ No build step and no server required — it's plain HTML/CSS/JS.
 ## Notes on prices
 
 Prices are entered as plain numbers (shown with a ¥ symbol). Item prices are shared
-across all paths since the market price of a Destiny Knot / Everstone / Power item is
-the same regardless of the path. Buy costs are set per leaf Pokémon because those vary.
+across all paths since the market price of an Everstone / Power item is the same
+regardless of the path. Buy costs are set per leaf Pokémon because those vary.

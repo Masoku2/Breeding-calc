@@ -11,7 +11,7 @@ const STORAGE_KEY = "breeding-calc.v1";
 
 const defaultState = () => ({
   paths: [],
-  prices: { destinyKnot: 0, everstone: 0, powerItem: 0 },
+  prices: { everstone: 0, powerItem: 0 },
   activePathId: null,
 });
 
@@ -141,7 +141,7 @@ function render() {
 }
 
 function renderPrices() {
-  ["destinyKnot", "everstone", "powerItem"].forEach((key) => {
+  ["everstone", "powerItem"].forEach((key) => {
     const input = document.querySelector(`[data-price="${key}"]`);
     if (input) input.value = state.prices[key] ?? 0;
   });

@@ -9,7 +9,6 @@ const IV_STATS = ["HP", "Atk", "Def", "SpA", "SpD", "Spe"];
 // passes:   the IV a Power item guarantees to pass down (for the tooltip).
 const HELD_ITEMS = [
   { id: "none",         label: "None",              priceKey: null,         passes: null },
-  { id: "destinyKnot",  label: "Destiny Knot",      priceKey: "destinyKnot", passes: null },
   { id: "everstone",    label: "Everstone (nature)", priceKey: "everstone",  passes: null },
   { id: "powerWeight",  label: "Power Weight (HP)",  priceKey: "powerItem",  passes: "HP" },
   { id: "powerBracer",  label: "Power Bracer (Atk)", priceKey: "powerItem",  passes: "Atk" },
