@@ -17,6 +17,10 @@
 
 * { box-sizing: border-box; }
 
+/* Ensure the `hidden` attribute always wins over class-based display rules
+   (e.g. .empty-state uses display:grid, which would otherwise override it). */
+[hidden] { display: none !important; }
+
 body {
   margin: 0;
   font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
@@ -222,6 +226,69 @@ input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; marg
   padding-left: 18px;
   border-left: 2px dashed var(--border);
 }
+
+/* ---------- Tree toolbar + view toggle ---------- */
+.tree-toolbar { display: flex; align-items: center; gap: 14px; margin: 6px 0 4px; flex-wrap: wrap; }
+.tree-toolbar .tree-heading { margin: 0; }
+.tree-hint { margin-top: 0; margin-bottom: 16px; }
+#fillSpeciesBtn { margin-left: auto; }
+
+.view-toggle { display: inline-flex; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+.toggle-btn {
+  font: inherit; font-weight: 600; font-size: 13px;
+  padding: 6px 13px; background: var(--bg-elev); color: var(--text-dim);
+  border: none; cursor: pointer; transition: background .15s, color .15s;
+}
+.toggle-btn + .toggle-btn { border-left: 1px solid var(--border); }
+.toggle-btn:hover { color: var(--text); }
+.toggle-btn.active { background: var(--bg-elev-2); color: var(--text); }
+
+/* ---------- Chart view (top-down tree diagram) ---------- */
+.chart-scroll { overflow-x: auto; padding: 8px 0 24px; }
+.chart-tree, .chart-tree ul {
+  display: flex; justify-content: center;
+  position: relative; padding-top: 22px;
+  list-style: none; margin: 0;
+}
+.chart-tree { padding-left: 0; }
+.chart-tree li { position: relative; padding: 22px 10px 0; text-align: center; }
+/* Connector lines between a node and its two parents. */
+.chart-tree li::before, .chart-tree li::after {
+  content: ''; position: absolute; top: 0; right: 50%;
+  border-top: 2px solid var(--border); width: 50%; height: 22px;
+}
+.chart-tree li::after { right: auto; left: 50%; border-left: 2px solid var(--border); }
+.chart-tree li:only-child { padding-top: 0; }
+.chart-tree li:only-child::before, .chart-tree li:only-child::after { display: none; }
+.chart-tree li:first-child::before, .chart-tree li:last-child::after { border: 0 none; }
+.chart-tree li:last-child::before { border-right: 2px solid var(--border); border-radius: 0 6px 0 0; }
+.chart-tree li:first-child::after { border-radius: 6px 0 0 0; }
+.chart-tree ul ul::before {
+  content: ''; position: absolute; top: 0; left: 50%;
+  border-left: 2px solid var(--border); width: 0; height: 22px;
+}
+
+.cnode {
+  display: inline-flex; flex-direction: column; gap: 4px;
+  min-width: 118px; max-width: 170px; padding: 8px 11px;
+  border: 1px solid var(--border); border-radius: 10px;
+  background: var(--bg-elev); cursor: pointer; text-align: left;
+  transition: border-color .12s, transform .05s;
+}
+.cnode:hover { border-color: var(--accent); }
+.cnode:active { transform: translateY(1px); }
+.cnode.root { border-left: 3px solid var(--good); }
+.cnode.bred { border-left: 3px solid var(--accent); }
+.cnode.leaf { border-left: 3px solid var(--warn); }
+.cnode-name { display: flex; justify-content: space-between; gap: 8px; font-weight: 650; font-size: 13px; }
+.cnode-gender { color: var(--text-dim); font-weight: 600; }
+.cnode-ivs { display: flex; flex-wrap: wrap; gap: 3px; }
+.cnode-iv {
+  font-size: 10px; font-weight: 700; padding: 1px 6px;
+  border-radius: 999px; background: rgba(53,208,127,.15); color: var(--good);
+}
+.cnode-iv-none { font-size: 10px; color: var(--text-dim); font-style: italic; }
+.cnode-meta { font-size: 11px; color: var(--text-dim); }
 
 /* ---------- Responsive ---------- */
 @media (max-width: 860px) {

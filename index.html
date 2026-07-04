@@ -90,8 +90,21 @@
         <!-- Profit summary -->
         <div class="summary" id="summary"></div>
 
-        <h3 class="tree-heading">Breeding tree <span class="hint">Top = final product · leaves = Pokémon you buy</span></h3>
+        <div class="tree-toolbar">
+          <h3 class="tree-heading">Breeding tree</h3>
+          <div class="view-toggle" role="tablist">
+            <button id="editViewBtn" class="toggle-btn active" role="tab">✏️ Edit</button>
+            <button id="chartViewBtn" class="toggle-btn" role="tab">🌳 Chart</button>
+          </div>
+          <button id="fillSpeciesBtn" class="btn small ghost" title="Copy the final Pokémon's species into every box in the tree">Fill species → all</button>
+        </div>
+        <p class="hint tree-hint">Top = final product · leaves = Pokémon you buy. Switch to <strong>Chart</strong> for a clean diagram.</p>
+
+        <!-- Edit view: editable cards -->
         <div id="treeRoot" class="tree-root"></div>
+
+        <!-- Chart view: read-only tree diagram -->
+        <div id="chartRoot" class="chart-scroll" hidden></div>
       </section>
     </main>
   </div>

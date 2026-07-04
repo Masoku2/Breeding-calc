@@ -24,8 +24,15 @@ whether the path makes money.
   each leaf Pokémon, plus shared item prices in the sidebar. The summary shows profit,
   margin, total cost, number of base Pokémon, number of breeds, and items consumed.
   Held items are counted as consumed on every breed (each non-final parent's item).
+- **Two views** — toggle between:
+  - **Edit** — the editable cards for building/adjusting a recipe.
+  - **Chart** — a clean, read-only top-down tree diagram of the finished recipe
+    (final product at the top, branching down to the Pokémon you buy). Click any
+    node in the chart to jump back to editing it.
 - **Quick tree** — generate a binary breeding-tree skeleton for a 2–6 IV target as a
-  starting point, then fill in the IVs and items to match your strategy.
+  starting point; it pre-fills the final species into every box. **Fill species → all**
+  copies the final Pokémon's species into every node in one click (most breeding
+  trees use the same species throughout, aside from a Ditto).
 - **Export / import** — back up or share all paths and prices as a JSON file.
 
 ## Usage

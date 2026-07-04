@@ -13,6 +13,7 @@ const defaultState = () => ({
   paths: [],
   prices: { everstone: 0, powerItem: 0 },
   activePathId: null,
+  viewMode: "edit", // "edit" | "chart"
 });
 
 let state = load();
@@ -180,9 +181,100 @@ function renderEditor(path) {
 
   renderSummary(path);
 
-  const root = el("treeRoot");
-  root.innerHTML = "";
-  root.appendChild(renderNode(path.root, true));
+  // View toggle state.
+  const chartMode = state.viewMode === "chart";
+  el("editViewBtn").classList.toggle("active", !chartMode);
+  el("chartViewBtn").classList.toggle("active", chartMode);
+  el("treeRoot").hidden = chartMode;
+  el("chartRoot").hidden = !chartMode;
+
+  if (chartMode) {
+    const chart = el("chartRoot");
+    chart.innerHTML = "";
+    chart.appendChild(renderChart(path.root));
+  } else {
+    const root = el("treeRoot");
+    root.innerHTML = "";
+    root.appendChild(renderNode(path.root, true));
+  }
+}
+
+/* ------------------------------------------------------------------ */
+/* Chart view (read-only tree diagram)                                */
+/* ------------------------------------------------------------------ */
+
+function renderChart(rootNode) {
+  const ul = document.createElement("ul");
+  ul.className = "chart-tree";
+  ul.appendChild(chartLi(rootNode, true));
+  return ul;
+}
+
+function chartLi(node, isRoot) {
+  const li = document.createElement("li");
+  li.appendChild(chartCard(node, isRoot));
+  if (node.parents.length) {
+    const ul = document.createElement("ul");
+    node.parents.forEach((p) => ul.appendChild(chartLi(p, false)));
+    li.appendChild(ul);
+  }
+  return li;
+}
+
+function chartCard(node, isRoot) {
+  const isLeaf = node.parents.length === 0;
+  const kind = isRoot ? "root" : isLeaf ? "leaf" : "bred";
+
+  const card = document.createElement("div");
+  card.className = `cnode ${kind}`;
+  card.title = "Click to edit this Pokémon";
+
+  // Name + gender line.
+  const name = document.createElement("div");
+  name.className = "cnode-name";
+  const gender = GENDERS.find((g) => g.id === node.gender);
+  const gIcon = { male: "♂", female: "♀", ditto: "Ditto", genderless: "⚲" }[node.gender] || "";
+  name.innerHTML = `<span>${escapeHtml(node.species || "—")}</span>` +
+    `<span class="cnode-gender">${gIcon}</span>`;
+  card.appendChild(name);
+
+  // IV pills — only the perfect ones, to stay compact.
+  const onIvs = IV_STATS.filter((s) => node.ivs[s]);
+  const ivs = document.createElement("div");
+  ivs.className = "cnode-ivs";
+  if (onIvs.length) {
+    onIvs.forEach((s) => {
+      const pill = document.createElement("span");
+      pill.className = "cnode-iv";
+      pill.textContent = s;
+      ivs.appendChild(pill);
+    });
+  } else {
+    ivs.innerHTML = `<span class="cnode-iv-none">no 31 IVs</span>`;
+  }
+  card.appendChild(ivs);
+
+  // Meta: nature + held item.
+  const metaBits = [];
+  if (node.nature) metaBits.push(node.nature);
+  if (!isRoot && node.heldItem && node.heldItem !== "none") {
+    metaBits.push(itemById(node.heldItem).label.replace(/\s*\(.*\)/, ""));
+  }
+  if (isLeaf) metaBits.push(money(node.cost));
+  if (metaBits.length) {
+    const meta = document.createElement("div");
+    meta.className = "cnode-meta";
+    meta.textContent = metaBits.join(" · ");
+    card.appendChild(meta);
+  }
+
+  // Clicking a chart node jumps to the editable view.
+  card.addEventListener("click", () => {
+    state.viewMode = "edit";
+    render();
+  });
+
+  return card;
 }
 
 function renderSummary(path) {
@@ -422,11 +514,17 @@ function escapeHtml(str) {
 // Build a binary breeding-tree skeleton that produces an n-IV Pokémon: an
 // n-IV offspring comes from two (n-1)-IV parents, recursively down to 1-IV
 // leaves you buy. IVs/items are left blank for you to fill in per your plan.
-function buildSkeleton(n) {
-  if (n <= 1) return newNode();
-  const node = newNode();
-  node.parents = [buildSkeleton(n - 1), buildSkeleton(n - 1)];
+function buildSkeleton(n, species) {
+  const node = newNode({ species: species || "" });
+  if (n > 1) node.parents = [buildSkeleton(n - 1, species), buildSkeleton(n - 1, species)];
   return node;
+}
+
+// Copy a species string into every node of a tree (most breeding trees use
+// the same species throughout, aside from a Ditto).
+function fillSpecies(node, species) {
+  node.species = species;
+  node.parents.forEach((p) => fillSpecies(p, species));
 }
 
 /* ------------------------------------------------------------------ */
@@ -516,9 +614,21 @@ function init() {
     if (!p) return;
     const n = Number(el("genIvCount").value);
     if (p.root.parents.length && !confirm("Replace the current tree with a fresh skeleton?")) return;
-    const skeleton = buildSkeleton(n);
-    skeleton.species = p.finalSpecies;
-    p.root = skeleton;
+    p.root = buildSkeleton(n, p.finalSpecies);
+    render();
+  });
+
+  // View toggle: Edit / Chart.
+  el("editViewBtn").addEventListener("click", () => { state.viewMode = "edit"; render(); });
+  el("chartViewBtn").addEventListener("click", () => { state.viewMode = "chart"; render(); });
+
+  // Fill the final species into every node of the tree.
+  el("fillSpeciesBtn").addEventListener("click", () => {
+    const p = activePath();
+    if (!p) return;
+    const species = p.finalSpecies.trim();
+    if (!species) { alert("Set the Final Pokémon first, then use this to copy it into every box."); return; }
+    fillSpecies(p.root, species);
     render();
   });
 
