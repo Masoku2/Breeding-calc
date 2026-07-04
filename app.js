@@ -54,6 +54,7 @@ function newNode(overrides = {}) {
     ivs: IV_STATS.reduce((acc, s) => ((acc[s] = false), acc), {}),
     heldItem: "none",
     cost: 0,
+    purchased: false, // intermediate node bought as a pre-made breeder
     parents: [],
     ...overrides,
   };
@@ -71,6 +72,14 @@ function newPath() {
 
 const activePath = () => state.paths.find((p) => p.id === state.activePathId) || null;
 
+// A node is "bought" (a Pokémon you purchase rather than breed) when it's a
+// leaf, or an intermediate breeder flagged as purchased. The root is always the
+// final product you're selling, never bought.
+function isBought(node, isRoot) {
+  if (isRoot) return false;
+  return node.parents.length === 0 || node.purchased;
+}
+
 const itemById = (id) => HELD_ITEMS.find((i) => i.id === id) || HELD_ITEMS[0];
 
 function itemPrice(heldItemId) {
@@ -85,16 +94,10 @@ function itemPrice(heldItemId) {
 
 // Walk the tree once and gather every figure the summary needs.
 function analyze(node, isRoot, acc) {
-  const isLeaf = node.parents.length === 0;
+  const bought = isBought(node, isRoot);
 
-  if (isLeaf) {
-    acc.baseCount += 1;
-    acc.baseCost += Number(node.cost) || 0;
-  } else {
-    acc.breeds += 1;
-  }
-
-  // Every parent (i.e. any non-root node) consumes its held item on breeding.
+  // Every non-root Pokémon holds its item when bred up a level, consuming it —
+  // this is true whether it was bred or bought as a pre-made breeder.
   if (!isRoot) {
     const price = itemPrice(node.heldItem);
     if (price > 0) {
@@ -103,6 +106,15 @@ function analyze(node, isRoot, acc) {
     }
   }
 
+  if (bought) {
+    // Buying this Pokémon: pay for it, and ignore its sub-tree entirely.
+    acc.baseCount += 1;
+    acc.baseCost += Number(node.cost) || 0;
+    return acc;
+  }
+
+  // Bred here (root or an intermediate you breed yourself).
+  if (node.parents.length) acc.breeds += 1;
   node.parents.forEach((child) => analyze(child, false, acc));
   return acc;
 }
@@ -214,7 +226,8 @@ function renderChart(rootNode) {
 function chartLi(node, isRoot) {
   const li = document.createElement("li");
   li.appendChild(chartCard(node, isRoot));
-  if (node.parents.length) {
+  // A bought breeder's sub-tree is not used, so don't chart it.
+  if (node.parents.length && !isBought(node, isRoot)) {
     const ul = document.createElement("ul");
     node.parents.forEach((p) => ul.appendChild(chartLi(p, false)));
     li.appendChild(ul);
@@ -223,8 +236,8 @@ function chartLi(node, isRoot) {
 }
 
 function chartCard(node, isRoot) {
-  const isLeaf = node.parents.length === 0;
-  const kind = isRoot ? "root" : isLeaf ? "leaf" : "bred";
+  const bought = isBought(node, isRoot);
+  const kind = isRoot ? "root" : bought ? "leaf" : "bred";
 
   const card = document.createElement("div");
   card.className = `cnode ${kind}`;
@@ -262,7 +275,7 @@ function chartCard(node, isRoot) {
   if (!isRoot && node.heldItem && node.heldItem !== "none") {
     metaBits.push(itemById(node.heldItem).label.replace(/\s*\(.*\)/, ""));
   }
-  if (isLeaf) metaBits.push(money(node.cost));
+  if (bought) metaBits.push(money(node.cost));
   if (metaBits.length) {
     const meta = document.createElement("div");
     meta.className = "cnode-meta";
@@ -314,8 +327,9 @@ function renderSummary(path) {
 
 function renderNode(node, isRoot) {
   const isLeaf = node.parents.length === 0;
-  const kind = isRoot ? "root" : isLeaf ? "leaf" : "bred";
-  const badgeText = isRoot ? "Final" : isLeaf ? "Buy" : "Bred";
+  const bought = isBought(node, isRoot);
+  const kind = isRoot ? "root" : bought ? "leaf" : "bred";
+  const badgeText = isRoot ? "Final" : bought ? "Buy" : "Bred";
 
   const wrap = document.createElement("div");
   wrap.className = `node ${kind}`;
@@ -378,8 +392,8 @@ function renderNode(node, isRoot) {
     );
   }
 
-  // Cost — only leaves are purchased.
-  if (isLeaf) {
+  // Cost — shown for any Pokémon you buy (a leaf, or a breeder flagged as bought).
+  if (bought) {
     top.appendChild(
       field(
         "Buy cost",
@@ -392,6 +406,23 @@ function renderNode(node, isRoot) {
   }
 
   wrap.appendChild(top);
+
+  // "Buy instead of breeding" toggle — only for intermediate breeders (has
+  // parents and isn't the final product). Buying it ignores its sub-tree.
+  if (!isRoot && !isLeaf) {
+    const toggle = document.createElement("label");
+    toggle.className = "buy-toggle";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.checked = !!node.purchased;
+    cb.addEventListener("change", () => {
+      node.purchased = cb.checked;
+      render();
+    });
+    toggle.appendChild(cb);
+    toggle.appendChild(document.createTextNode(" Buy this breeder instead of breeding it"));
+    wrap.appendChild(toggle);
+  }
 
   // IV chips
   wrap.appendChild(renderIvs(node));
@@ -416,10 +447,17 @@ function renderNode(node, isRoot) {
   }
   wrap.appendChild(actions);
 
-  // Children
+  // Children. When this breeder is bought, its parents aren't used — dim them
+  // and label them so it's clear they're excluded from the cost.
   if (node.parents.length) {
     const kids = document.createElement("div");
-    kids.className = "children";
+    kids.className = "children" + (node.purchased ? " ignored" : "");
+    if (node.purchased) {
+      const note = document.createElement("div");
+      note.className = "ignored-note";
+      note.textContent = "Not used — this breeder is bought, not bred:";
+      kids.appendChild(note);
+    }
     node.parents.forEach((child) => kids.appendChild(renderNode(child, false)));
     wrap.appendChild(kids);
   }
