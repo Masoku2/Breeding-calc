@@ -18,9 +18,12 @@ whether the path makes money.
   - **Nature** — all 25 natures, labelled with their stat boost/drop (passed down by
     a parent holding an Everstone)
   - **Ability** — free-text with autocomplete for common abilities
+  - **Ability roll** — mark whether the ability is Guaranteed or a random **50/50** or
+    **33/33/33** roll. A random roll adds its *expected* ability-fix cost (chance of a
+    wrong roll × the shared Ability-change price, default ¥35,000) to the total.
   - **Egg moves** — a comma-separated list of the moves to breed onto that Pokémon
   - **31 IVs** — click the HP / Atk / Def / SpA / SpD / Spe chips to mark perfect IVs
-  - **Held item** — Everstone (nature) or the six Power items (PokeMMO uses
+  - **Held item** — Everstone (nature), Incense, or the six Power items (PokeMMO uses
     Power items for IV inheritance; there is no Destiny Knot)
 - **Buy vs. breed** — every Pokémon you buy has a **Buy cost**. Beyond the bottom
   "Buy" Pokémon, any intermediate breeder can be flagged **"Buy this breeder instead
