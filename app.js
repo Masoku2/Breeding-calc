@@ -48,6 +48,7 @@ function newNode(overrides = {}) {
     id: uid(),
     species: "",
     gender: "male",
+    nature: "",
     ivs: IV_STATS.reduce((acc, s) => ((acc[s] = false), acc), {}),
     heldItem: "none",
     cost: 0,
@@ -241,6 +242,19 @@ function renderNode(node, isRoot) {
   // Gender
   top.appendChild(
     field("Gender", selectEl(GENDERS, node.gender, (v) => set(node, "gender", v), "node-gender"))
+  );
+
+  // Nature
+  top.appendChild(
+    field(
+      "Nature",
+      selectEl(
+        NATURES.map((nt) => ({ id: nt.id, label: nt.label })),
+        node.nature,
+        (v) => set(node, "nature", v),
+        "node-nature"
+      )
+    )
   );
 
   // Held item — only meaningful when the node is used as a parent (not root).
