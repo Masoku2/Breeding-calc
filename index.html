@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PokeMMO Breeding Profit Calculator</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <span class="logo">⚗️</span>
+      <div>
+        <h1>Breeding Profit Calculator</h1>
+        <p class="tagline">Plan PokeMMO breeding paths and see the profit at a glance</p>
+      </div>
+    </div>
+    <div class="topbar-actions">
+      <button id="exportBtn" class="btn ghost" title="Download all paths and prices as JSON">Export</button>
+      <button id="importBtn" class="btn ghost" title="Load paths and prices from a JSON file">Import</button>
+      <input type="file" id="importFile" accept="application/json" hidden />
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- Sidebar: saved paths -->
+    <aside class="sidebar">
+      <div class="sidebar-head">
+        <h2>Saved paths</h2>
+        <button id="newPathBtn" class="btn small primary">+ New</button>
+      </div>
+      <ul id="pathList" class="path-list"></ul>
+
+      <div class="prices-card">
+        <h2>Item prices</h2>
+        <p class="hint">Shared across all paths. Held items are consumed each breed.</p>
+        <label class="price-row">
+          <span>Everstone</span>
+          <input type="number" min="0" step="1" id="price-everstone" data-price="everstone" />
+        </label>
+        <label class="price-row">
+          <span>Power item</span>
+          <input type="number" min="0" step="1" id="price-powerItem" data-price="powerItem" />
+        </label>
+        <p class="hint">Power Weight / Bracer / Belt / Lens / Band / Anklet share one price.</p>
+      </div>
+    </aside>
+
+    <!-- Main: active path editor -->
+    <main class="main">
+      <section id="emptyState" class="empty-state">
+        <div class="empty-inner">
+          <div class="empty-emoji">🥚</div>
+          <h2>No path selected</h2>
+          <p>Create a new breeding path to get started, or pick one from the sidebar.</p>
+          <button id="emptyNewBtn" class="btn primary">+ New breeding path</button>
+        </div>
+      </section>
+
+      <section id="pathEditor" class="path-editor" hidden>
+        <div class="path-header">
+          <input type="text" id="pathName" class="path-name-input" placeholder="Path name (e.g. 5x31 Adamant Larvitar)" />
+          <button id="deletePathBtn" class="btn small danger ghost">Delete path</button>
+        </div>
+
+        <div class="path-meta">
+          <label class="meta-field">
+            <span>Final Pokémon</span>
+            <input type="text" list="pokemonList" id="finalSpecies" placeholder="e.g. Tyranitar" />
+          </label>
+          <label class="meta-field">
+            <span>Sell price</span>
+            <input type="number" min="0" step="1" id="sellPrice" placeholder="0" />
+          </label>
+          <div class="meta-field generate">
+            <span>Quick tree</span>
+            <div class="generate-row">
+              <select id="genIvCount">
+                <option value="2">2 IV</option>
+                <option value="3">3 IV</option>
+                <option value="4">4 IV</option>
+                <option value="5" selected>5 IV</option>
+                <option value="6">6 IV</option>
+              </select>
+              <button id="genTreeBtn" class="btn small" title="Build a binary breeding-tree skeleton to fill in">Generate</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Profit summary -->
+        <div class="summary" id="summary"></div>
+
+        <h3 class="tree-heading">Breeding tree <span class="hint">Top = final product · leaves = Pokémon you buy</span></h3>
+        <div id="treeRoot" class="tree-root"></div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Datalist of common breedable species (typeable, not exhaustive) -->
+  <datalist id="pokemonList"></datalist>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
