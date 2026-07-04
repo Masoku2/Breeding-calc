@@ -50,6 +50,7 @@ function newNode(overrides = {}) {
     species: "",
     gender: "male",
     nature: "",
+    ability: "",
     ivs: IV_STATS.reduce((acc, s) => ((acc[s] = false), acc), {}),
     heldItem: "none",
     cost: 0,
@@ -254,9 +255,10 @@ function chartCard(node, isRoot) {
   }
   card.appendChild(ivs);
 
-  // Meta: nature + held item.
+  // Meta: nature + ability + held item.
   const metaBits = [];
   if (node.nature) metaBits.push(node.nature);
+  if (node.ability) metaBits.push(node.ability);
   if (!isRoot && node.heldItem && node.heldItem !== "none") {
     metaBits.push(itemById(node.heldItem).label.replace(/\s*\(.*\)/, ""));
   }
@@ -346,6 +348,18 @@ function renderNode(node, isRoot) {
         (v) => set(node, "nature", v),
         "node-nature"
       )
+    )
+  );
+
+  // Ability
+  top.appendChild(
+    field(
+      "Ability",
+      inputEl("text", node.ability, (v) => set(node, "ability", v), {
+        list: "abilityList",
+        cls: "node-ability",
+        placeholder: "Ability",
+      })
     )
   );
 
@@ -579,6 +593,13 @@ function init() {
     const o = document.createElement("option");
     o.value = s;
     dl.appendChild(o);
+  });
+
+  const adl = el("abilityList");
+  COMMON_ABILITIES.forEach((a) => {
+    const o = document.createElement("option");
+    o.value = a;
+    adl.appendChild(o);
   });
 
   // Sidebar + empty-state new-path buttons.
